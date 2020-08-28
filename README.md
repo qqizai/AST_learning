@@ -77,7 +77,11 @@ UglifyJS: http://lisperator.net/uglifyjs/
 > 
 
 
+致谢：
 
+[Nightteam 夜幕团队](https://github.com/NightTeam)
+
+陆小凤: 还原obfuscator混淆代码的脚本，详情：[decode_obfuscator](./obfuscator)
 
 
 
