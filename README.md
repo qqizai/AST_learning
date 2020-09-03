@@ -1,8 +1,18 @@
 # AST_learning
 
+
 AST相关知识学习
 
+---
 目前JavaScript代码大都是混淆过的，让我们一起来学习AST相关知识，可以通过操作AST，还原被obfuscator工具混淆了的JavaScript代码
+
+--- 
+
+首先来看一下 Mozilla开发者社区 介绍相关知识：[Node_objects](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API#Node_objects)
+
+如果不想看英文的话，这里还有其他大佬提供的中文的文档：
+
+[JavaScript抽象语法树AST](https://github.com/yacan8/blog/blob/master/posts/JavaScript%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91AST.md)
 
 
 下面来看一下大佬们整理的AST资料：
@@ -79,9 +89,12 @@ UglifyJS: http://lisperator.net/uglifyjs/
 
 致谢：
 
-[Nightteam 夜幕团队](https://github.com/NightTeam)
+- Nightteam 夜幕团队
 
-陆小凤: 还原obfuscator混淆代码的脚本，详情：[decode_obfuscator](./obfuscator)
+- 陆小凤
+
+- 杨溜溜(yacan8)
+
 
 
 

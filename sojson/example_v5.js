@@ -15,6 +15,9 @@ var encode_version = 'jsjiami.com.v5',
         '5Yuh6Zi+54uS5p2p5YyC77yJckPkvpXlrqLmn7zlv7rnq5M=',
         '56iY6ZSl5oy/6aqd57mSJeKAhHrDnOWKmOWspeKDnmTlk7la4oKmwoIQ6KeB5a+x4oOXaO+/veS/ruWOsOS+qeeaiTw6YeOCkA==',
         'Q2/Dg8Kc', 'S33DrsORw60=', 'GMO4fMKHwqrCsw==', 'wrc+w6M2woY='];
+
+console.log(_0x172e);
+
 (function (_0x2e7871, _0x1236cc) {
     var _0x147c2b = function (_0x28c10e) {
         while (--_0x28c10e) {
@@ -23,6 +26,11 @@ var encode_version = 'jsjiami.com.v5',
     };
     _0x147c2b(++_0x1236cc);
 }(_0x172e, 0x183));
+
+console.log(_0x172e);
+
+
+
 var _0x5887 = function (_0x95b7df, _0xf6075) {
     _0x95b7df = _0x95b7df - 0x0;
     var _0x385892 = _0x172e[_0x95b7df];
@@ -33,8 +41,8 @@ var _0x5887 = function (_0x95b7df, _0xf6075) {
             var _0x2f371b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
             _0x2a5877['atob'] || (_0x2a5877['atob'] = function (_0x3cf0d9) {
                 var _0x27c73d = String(_0x3cf0d9)['replace'](/=+$/, '');
-                for (var _0x537aa1 = 0x0, _0x3c16a0, _0x5bc28e, _0x47d1d9 = 0x0, _0xf42829 = ''; _0x5bc28e =
-                    _0x27c73d['charAt'](_0x47d1d9++); ~_0x5bc28e && (_0x3c16a0 = _0x537aa1 % 0x4 ?
+                for (var _0x537aa1 = 0x0, _0x3c16a0, _0x5bc28e, _0x47d1d9 = 0x0, _0xf42829 = '';
+                     _0x5bc28e = _0x27c73d['charAt'](_0x47d1d9++); ~_0x5bc28e && (_0x3c16a0 = _0x537aa1 % 0x4 ?
                     _0x3c16a0 * 0x40 + _0x5bc28e : _0x5bc28e, _0x537aa1++ % 0x4) ? _0xf42829 +=
                     String['fromCharCode'](0xff & _0x3c16a0 >> (-0x2 * _0x537aa1 & 0x6)) : 0x0) {
                     _0x5bc28e = _0x2f371b['indexOf'](_0x5bc28e);
@@ -103,6 +111,7 @@ var a = {},
     _0x470239[_0x5887('0x3', '$P5Z')] = _0x1b7aa9[_0x5887('0x4', 'J3!6')];
     _0x470239[_0x5887('0x5', ']Hml')] = _0x1b7aa9[_0x5887('0x6', 'L7VB')];
 }(a, b));;
+/*
 (function (_0x21ab4f, _0x13d924, _0x51d9de) {
     var _0x4910a4 = {
         'uGJdm': 'ert',
@@ -126,4 +135,4 @@ var a = {},
         _0x21ab4f[_0x51d9de](_0x5887('0xd', 'J3!6'));
     }
 }(window));;
-encode_version = 'jsjiami.com.v5';
+encode_version = 'jsjiami.com.v5';*/
