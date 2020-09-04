@@ -13,7 +13,7 @@ AST相关知识学习
 - 首先来看一下 Mozilla开发者社区 介绍相关知识：[Node_objects](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API#Node_objects)
 - 如果不想看英文的话，这里还有其他大佬提供的中文的文档：[JavaScript抽象语法树AST](https://github.com/yacan8/blog/blob/master/posts/JavaScript%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91AST.md)
 - [Javascript抽象语法树下篇(实践篇)](https://cloud.tencent.com/developer/article/1554165)
-
+- [babel Github文档](https://github.com/babel/babel/tree/6.x/packages/babel-types)
 
 
 下面再来看一下大佬们整理的AST资料：
