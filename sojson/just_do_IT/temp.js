@@ -130,12 +130,18 @@ console.log(generator(ast).code)
  * 替换后的代码
  * **/
 
-/*
+
 
 var a = {},
     b = {};
 
 (function (_0x5e0715, _0x2727bc) {
+    var _0x2763bf = {
+        'hGpeZ': "\u8FD9\u662F\u4E00\u4E2A\u4E00\u7CFB\u5217js\u64CD\u4F5C\u3002",
+        'sYoYH': "\u7AD9\u957F\u63A5\u9AD8\u7EA7 \u201CJS\u52A0\u5BC6\u201D \u548C \u201CJS\u89E3\u5BC6\u201D \uFF0C\u4FDD\u536B\u4F60\u7684 js\u3002",
+        'bRClp': '如果您的JS里嵌套了PHP，JSP标签，等等其他非JavaScript的代码，请提取出来再加密。这个工具不能加密php、jsp等模版内容',
+        'hlrsP': "\u672C\u5DE5\u5177\u7531 www.jsjiami.com \u63D0\u4F9B\u63A5\u53E3\u3002"
+    };
     _0x5e0715["info"] = _0x2763bf["hGpeZ"];
     _0x2727bc["adinfo"] = _0x2763bf["sYoYH"];
     _0x2727bc['warning'] = _0x2763bf['bRClp'];
@@ -145,6 +151,22 @@ var a = {},
 ;
 
 (function (_0x4f25a9, _0x249391, _0xec96c1) {
+    var _0x1fff11 = {
+        'mnPwx': "fvy",
+        'TbqCI': "xZI",
+        'fPLCO': "ert",
+        'OpmXp': function _0x249c07(_0x3746f6, _0x35f875) {
+            return _0x3746f6 !== _0x35f875;
+        },
+        'hqjgd': "undefined",
+        'Euthk': function _0x391777(_0x1833ed, _0x39a336) {
+            return _0x1833ed + _0x39a336;
+        },
+        'GHtNj': "\u7248\u672C\u53F7\uFF0Cjs\u4F1A\u5B9A\u671F\u5F39\u7A97\uFF0C\u8FD8\u8BF7\u652F\u6301\u6211\u4EEC\u7684\u5DE5\u4F5C",
+        'YlCYb': '这是一个一系列js操作。',
+        'pRAFr': "\u5982\u679C\u60A8\u7684JS\u91CC\u5D4C\u5957\u4E86PHP\uFF0CJSP\u6807\u7B7E\uFF0C\u7B49\u7B49\u5176\u4ED6\u975EJavaScript\u7684\u4EE3\u7801\uFF0C\u8BF7\u63D0\u53D6\u51FA\u6765\u518D\u52A0\u5BC6\u3002\u8FD9\u4E2A\u5DE5\u5177\u4E0D\u80FD\u52A0\u5BC6php\u3001jsp\u7B49\u6A21\u7248\u5185\u5BB9",
+        'IMTtB': "\u5220\u9664\u7248\u672C\u53F7\uFF0Cjs\u4F1A\u5B9A\u671F\u5F39\u7A97"
+    };
     _0xec96c1 = 'al';
 
     try {
@@ -168,9 +190,6 @@ var a = {},
 
 ;
 encode_version = 'jsjiami.com.v5';
-
-*/
-
 
 
 

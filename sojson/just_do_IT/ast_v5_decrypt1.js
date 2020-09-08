@@ -55,12 +55,17 @@ function reduction(ast) {
     }
     traverse(ast, operation_one)
 
-    //02、还原混淆js代码内部的字符串部分，替换那些使用到了 _0x1fff11 对象的值
+    //02、还原 a、b对象赋值的最终情况
+
+
+    //03、还原混淆js代码内部的字符串部分，替换那些使用到了 _0x1fff11 对象的值
     const operation_two = function(path){
         var current_node = path.node
         const obj_name = current_node.id.name;
+        console.log(obj_name)
 
-        if (current_node.init.properties.length > 0){
+
+        /*if (current_node.init.properties.length > 0){
             var propertiesList = current_node.init.properties
 
             for (one of propertiesList){
@@ -82,8 +87,8 @@ function reduction(ast) {
                                 && son_node.property.type === "StringLiteral"
                                 && son_node.property.value === obj_key){
 
-                                console.log("12333333333")
-                                console.log(obj_name, obj_key, obj_value)
+                                /!*console.log("12333333333")
+                                console.log(obj_name, obj_key, obj_value)*!/
                                 son_path.replaceWith(types.numericLiteral(obj_value))
 
                             }
@@ -96,9 +101,9 @@ function reduction(ast) {
             }
 
             //删除这个节点
-            path.remove()
+            // path.remove()
 
-        }
+        }*/
 
 
 
@@ -106,7 +111,6 @@ function reduction(ast) {
     traverse(ast, {
         VariableDeclarator: operation_two
     })
-
 
     return ast
 }
