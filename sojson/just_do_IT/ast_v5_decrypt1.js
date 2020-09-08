@@ -3,10 +3,9 @@ const traverse = require("@babel/traverse").default
 const generator = require("@babel/generator").default
 const types = require("@babel/types")
 const fs = require("fs")
+const path = require('path')
 
 const sdk = require("./source_part_one")
-
-
 
 
 /**
@@ -15,7 +14,7 @@ const sdk = require("./source_part_one")
 const read_file_options = {
     encoding: "utf-8"
 }
-const source_code = fs.readFileSync("./source_part_two.js", read_file_options)
+const source_code = fs.readFileSync(path.join(__dirname, "./source_part_two.js"), read_file_options)
 
 // console.log(source_code)
 
