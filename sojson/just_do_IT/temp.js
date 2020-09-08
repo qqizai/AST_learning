@@ -119,3 +119,58 @@ traverse(ast, {
 })
 
 console.log(generator(ast).code)
+
+
+
+
+
+
+
+/**
+ * 替换后的代码
+ * **/
+
+/*
+
+var a = {},
+    b = {};
+
+(function (_0x5e0715, _0x2727bc) {
+    _0x5e0715["info"] = _0x2763bf["hGpeZ"];
+    _0x2727bc["adinfo"] = _0x2763bf["sYoYH"];
+    _0x2727bc['warning'] = _0x2763bf['bRClp'];
+    _0x2727bc["intro"] = _0x2763bf["hlrsP"];
+})(a, b);
+
+;
+
+(function (_0x4f25a9, _0x249391, _0xec96c1) {
+    _0xec96c1 = 'al';
+
+    try {
+        if (_0x1fff11["mnPwx"] !== _0x1fff11["TbqCI"]) {
+            _0xec96c1 += _0x1fff11['fPLCO'];
+            _0x249391 = encode_version;
+
+            if (!(_0x1fff11["OpmXp"](typeof _0x249391, _0x1fff11['hqjgd']) && _0x249391 === "jsjiami.com.v5")) {
+                _0x4f25a9[_0xec96c1](_0x1fff11['Euthk']('删除', _0x1fff11["GHtNj"]));
+            }
+        } else {
+            _0x4f25a9["info"] = _0x1fff11["YlCYb"];
+            d['adinfo'] = "\u7AD9\u957F\u63A5\u9AD8\u7EA7 \u201CJS\u52A0\u5BC6\u201D \u548C \u201CJS\u89E3\u5BC6\u201D \uFF0C\u4FDD\u536B\u4F60\u7684 js\u3002";
+            d["warning"] = _0x1fff11["pRAFr"];
+            d['intro'] = '本工具由\x20www.jsjiami.com\x20提供接口。';
+        }
+    } catch (_0xdb29db) {
+        _0x4f25a9[_0xec96c1](_0x1fff11['IMTtB']);
+    }
+})(window);
+
+;
+encode_version = 'jsjiami.com.v5';
+
+*/
+
+
+
+
