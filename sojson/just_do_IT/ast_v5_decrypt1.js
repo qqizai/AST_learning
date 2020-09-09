@@ -108,9 +108,9 @@ function reduction(ast) {
 
 
     }
-    traverse(ast, {
+    /*traverse(ast, {
         VariableDeclarator: operation_two
-    })
+    })*/
 
     return ast
 }

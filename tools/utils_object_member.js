@@ -22,6 +22,28 @@ const types = require("@babel/types")
  * 将 test_obj["a"] 直接换成 123，所以 var member_value = 123;
  * */
 
+let visitor_obj = {
+    VariableDeclarator: function (path) {
+        var node = path.node;
+
+        //如果不是对象表达式，不用处理，直接跳过
+        if (!types.isObjectExpression(node.init)) {
+            return;
+        }
+
+        //提取对象的属性，作为一个list,同时再次用长度来判断一下，是否是一个空的对象，没有属性的
+        var objPropertiesList = node.init.properties;
+        if (objPropertiesList.length == 0) {
+            return;
+        }
+
+
+
+
+    }
+}
+
+
 
 function handle_obj_member_value(ast) {
 
