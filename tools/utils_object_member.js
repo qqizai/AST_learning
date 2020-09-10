@@ -11,6 +11,7 @@ const generator = require("@babel/generator").default
 const types = require("@babel/types")
 
 
+
 /**
  * 类型1
  *
@@ -21,109 +22,166 @@ const types = require("@babel/types")
  * 将 test_obj["a"] 直接换成 123，所以 var member_value = 123;
  * */
 
-/*******************************************************
- 还原object，key多为字符串，value为字符串和函数
- 多看看文档，会有不一样的收获的: https://github.com/jamiebuilds/babel-handbook/blob/master/translations/zh-Hans/plugin-handbook.md
- *******************************************************/
-const decode_object = {
-    VariableDeclarator(path) {
-        const {id, init} = path.node;
-        if (!types.isObjectExpression(init)) return;
-        let name = id.name;
-        let properties = init.properties;
-        //获取当前节点后面的弟弟节点,  注意获取全部、及获取单个弟弟节点( getAllNextSiblings 和 getNextSibling )
-        let all_next_siblings = path.parentPath.getAllNextSiblings();
-        // console.log(all_next_siblings.toString())
+let visitor_obj = {
+    VariableDeclarator: function (path) {
+        var node = path.node;
 
-        for (let next_sibling of all_next_siblings) {
-            if (!next_sibling.isExpressionStatement()) break;
-            let expression = next_sibling.get('expression');
-
-            if (!expression.isAssignmentExpression()) break;
-
-            let {operator, left, right} = expression.node;
-
-            if (operator != '=' || !types.isMemberExpression(left) ||
-                !types.isIdentifier(left.object, {name: name}) || !types.isStringLiteral(left.property)) {
-                break;
-            }
-            properties.push(types.ObjectProperty(left.property, right));
-
-            next_sibling.remove();
-
-        }
-
-        if (properties.length == 0) {
+        //如果不是对象表达式，不用处理，直接跳过
+        if (!types.isObjectExpression(node.init)) {
             return;
         }
 
-        let scope = path.scope;
-        let next_sibling = path.parentPath.getNextSibling();
-        if (next_sibling.isVariableDeclaration()) {
-            let declarations = next_sibling.node.declarations;
+        let obj_name = node.id.name;
 
-            if (declarations.length > 0 && types.isIdentifier(declarations[0].init, {name: name})) {
-                scope.rename(declarations[0].id.name, name);
+        //首先查看当前节点下，是否有赋值的情况，有的话，直接将 obj_name.info = 123 替换为：往 obj_name 的属性list里面增加一个ObjectProperty
+        let all_next_siblings = path.parentPath.getAllNextSiblings();
+        all_next_siblings.forEach(next_sibling => {
+            if (next_sibling.type !== "ExpressionStatement") return;
+
+            //获取表达式
+            let expression = next_sibling.get("expression");
+            if (expression.type !== "AssignmentExpression") return
+
+            let { left, operator, right } = expression.node;
+            if (left.type === "MemberExpression" && left.object.name === obj_name && operator === "=") {
+                //开始往 obj_name 的属性list里面增加一个ObjectProperty
+
+                //方法一
+                /*//这个值的类型可能有很多种的，暂时还不知道如何覆盖全部/绝大部分，目前这里只是兼顾了 StringLiteral、NumericLiteral
+                if (!(right.type === "StringLiteral" || right.type === "NumericLiteral")) return;
+                let tmp_objectProperty = {
+                    type: "ObjectProperty",
+                    key: {
+                        type: "StringLiteral",
+                        value: left.property.name
+                    },
+                    value: {
+                        type: right.type,
+                        value: right.value
+                    }
+                }
+                node.init.properties.push(tmp_objectProperty);*/
+
+                //方法二：应该是可以覆盖全部的(只测试了 StringLiteral、NumericLiteral、UnaryExpression、FunctionExpression)
+                node.init.properties.push(types.ObjectProperty(left.property, right));
+
+                //然后移除当前已经处理的节点，一定记得需要检验一下，最后的代码，是否符合
                 next_sibling.remove();
             }
-        }
 
-        for (const property of properties) {//预判是否为 obfuscator 混淆的object
-            let key = property.key.value;
-            let value = property.value;
-            if (!types.isStringLiteral(value) && !types.isFunctionExpression(value)) {
-                return;
-            }
-        }
+        })
 
-        for (const property of properties) {
-            let key = property.key.value;
-            let value = property.value;
-            if (types.isLiteral(value)) {
-                scope.traverse(scope.block, {
-                    MemberExpression(_path) {
-                        let _node = _path.node;
-                        if (!types.isIdentifier(_node.object, {name: name})) return;
-                        if (!types.isLiteral(_node.property, {value: key})) return;
-                        _path.replaceWith(value);
-                    },
-                })
-            } else if (types.isFunctionExpression(value)) {
-                let ret_state = value.body.body[0];
-                if (!types.isReturnStatement(ret_state)) continue;
-                scope.traverse(scope.block, {
-                    CallExpression: function (_path) {
-                        let {callee, arguments} = _path.node;
-                        if (!types.isMemberExpression(callee)) return;
 
-                        if (!types.isIdentifier(callee.object, {name: name})) return;
-                        if (!types.isLiteral(callee.property, {value: key})) return;
+        //对对象名为 obj_name 的属性进行遍历，从这个节点的父节点开始往下找，如果找到了有相关应用的话，那么需要还原回去
+        var objPropertiesList = node.init.properties;
+        if (objPropertiesList.length == 0) return;
 
-                        let replace_node = null;
+        objPropertiesList.forEach(prop => {
+            //判断是否为 NumericLiteral、StringLiteral、简单的 FunctionExpression (直接返回的)
+            var obj_key_name = prop.key.value;
+            var obj_key_value = prop.value;
+            var fnPath = path.getFunctionParent();
 
-                        if (types.isCallExpression(ret_state.argument) && arguments.length > 0) {
-                            replace_node = types.CallExpression(arguments[0], arguments.slice(1));
-                        } else if (types.isBinaryExpression(ret_state.argument) && arguments.length === 2) {
-                            replace_node = types.BinaryExpression(ret_state.argument.operator, arguments[0], arguments[1]);
-                        } else if (types.isLogicalExpression(ret_state.argument) && arguments.length === 2) {
-                            replace_node = types.LogicalExpression(ret_state.argument.operator, arguments[0], arguments[1]);
+            //存在情况
+            //1、VariableDeclaration,如 var abc = a.info 或 var abc = a['info']
+            //2、ExpressionStatement,如 bcd = a.info 或 bcd = a['info']
+            //同时还得再细分 CallExpression,如 var res = a['dd'](12, 23) 或者 res = a['dd'](12, 23)
+            if (prop.key.type === "NumericLiteral" || prop.key.type === "StringLiteral") {
+
+                fnPath.traverse(
+                    {
+                        //var abc = a.info
+                        VariableDeclaration: function (var_path) {
+                            var _path = var_path.node
+                            if (_path.type === "MemberExpression" && _path.object.name === obj_name && _path.property.value === obj_key_name) {
+                                console.log(obj_key_value)
+                                var_path.replace(obj_key_value);
+                            }
+                        },
+
+                        //bcd = a.info
+                        ExpressionStatement: function (expre_path) {
+                            var _path = expre_path.get("expression");
+                            if (_path.type === "AssignmentExpression" && _path.operator === "=" && _path.right.type === "MemberExpression"
+                                && _path.right.object.name === obj_name && _path.right.property.name === obj_key_name) {
+                                console.log(obj_key_value)
+                                var_path.replace(obj_key_value);
+                            }
                         }
-                        replace_node && _path.replaceWith(replace_node);
                     }
-                })
+                )
             }
+
+            if (prop.type === "FunctionExpression") {
+
+            }
+
+        })
+
+
+
+    }
+}
+
+
+
+function handle_obj_member_value(ast) {
+    traverse(ast, visitor_obj);
+    return ast
+
+}
+
+
+var code = "function f() {\n" +
+    "    var a = {\n" +
+    "        'info': 123,\n" +
+    "        'bc': 456,\n" +
+    "        'dd': function(abc, abd){\n" +
+    "            return abc+abd;\n" +
+    "        }\n" +
+    "    }\n" +
+    "\n" +
+    "\n" +
+    "    a.age = 10\n" +
+    "    a.addr = \"这是哪里\"\n" +
+    "    a.test = !(function(abc, abd){\n" +
+    "        return abc+abd;\n" +
+    "    })(1213, 456);\n" +
+    "\n" +
+    "    var abc = a.info\n" +
+    "    abc = a.info\n" +
+    "    var abd = a['info']\n" +
+    "    var abd = 1213\n" +
+    "\n" +
+    "    var res = a['dd'](12, 23)\n" +
+    "}"
+
+var ast = parser.parse(code)
+ast = handle_obj_member_value(ast)
+console.log(generator(ast).code)
+
+function f() {
+    var a = {
+        'info': 123,
+        'bc': 456,
+        'dd': function(abc, abd){
+            return abc+abd;
         }
-        path.remove();
-    },
-}
+    }
 
-function get_object_value(ast) {
-    traverse(ast, decode_object);
-    return ast;
-}
 
-module.exports = {
-    "get_object_value": get_object_value
+    a.age = 10
+    a.addr = "这是哪里"
+    a.test = !(function(abc, abd){
+        return abc+abd;
+    })(1213, 456);
+
+    var abc = a.info
+    abc = a.info
+    var abd = a['info']
+    var abd = 1213
+
+    var res = a['dd'](12, 23)
 }
 
 
