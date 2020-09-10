@@ -6,6 +6,7 @@ const fs = require("fs")
 const path = require('path')
 
 const sdk = require("./source_part_one")
+const get_object_value = require("../../tools/utils_object_member")
 
 
 /**
@@ -63,6 +64,9 @@ function reduction(ast) {
         var current_node = path.node
         const obj_name = current_node.id.name;
         console.log(obj_name)
+        /*const {confident, value} = path.evaluate();
+        console.log(confident, value)*/
+
 
 
         /*if (current_node.init.properties.length > 0){
@@ -108,9 +112,11 @@ function reduction(ast) {
 
 
     }
-    traverse(ast, {
+    /*traverse(ast, {
         VariableDeclarator: operation_two
-    })
+    })*/
+
+    ast = get_object_value.get_object_value(ast);
 
     return ast
 }
