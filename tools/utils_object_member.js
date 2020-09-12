@@ -33,14 +33,18 @@ let visitor_obj = {
 
         let obj_name = node.id.name;
 
-        //首先查看当前节点下，是否有赋值的情况，有的话，直接将 obj_name.info = 123 替换为：往 obj_name 的属性list里面增加一个ObjectProperty
+        //1、首先查看当前节点下，是否有赋值的情况，有的话，直接将 obj_name.info = 123 替换为：往 obj_name 的属性list里面增加一个ObjectProperty
         let all_next_siblings = path.parentPath.getAllNextSiblings();
         all_next_siblings.forEach(next_sibling => {
-            if (next_sibling.type !== "ExpressionStatement") return;
+            if (next_sibling.type !== "ExpressionStatement") {
+                return;
+            }
 
             //获取表达式
             let expression = next_sibling.get("expression");
-            if (expression.type !== "AssignmentExpression") return
+            if (expression.type !== "AssignmentExpression") {
+                return;
+            }
 
             let { left, operator, right } = expression.node;
             if (left.type === "MemberExpression" && left.object.name === obj_name && operator === "=") {
@@ -72,47 +76,41 @@ let visitor_obj = {
         })
 
 
-        //对对象名为 obj_name 的属性进行遍历，从这个节点的父节点开始往下找，如果找到了有相关应用的话，那么需要还原回去
+        //2、对对象名为 obj_name 的属性进行遍历，从这个节点的父节点开始往下找，如果找到了有相关应用的话，那么需要还原回去
         var objPropertiesList = node.init.properties;
         if (objPropertiesList.length == 0) return;
 
         objPropertiesList.forEach(prop => {
             //判断是否为 NumericLiteral、StringLiteral、简单的 FunctionExpression (直接返回的)
-            var obj_key_name = prop.key.value;
-            var obj_key_value = prop.value;
+            var obj_key_name = prop.key.value || prop.key.name;
+            var obj_key_value = prop.value.value || prop.value.name;
+
             var fnPath = path.getFunctionParent();
 
             //存在情况
-            //1、VariableDeclaration,如 var abc = a.info 或 var abc = a['info']
-            //2、ExpressionStatement,如 bcd = a.info 或 bcd = a['info']
+            //如 var abc = a.info 或 var abc = a['info']
             //同时还得再细分 CallExpression,如 var res = a['dd'](12, 23) 或者 res = a['dd'](12, 23)
             if (prop.key.type === "NumericLiteral" || prop.key.type === "StringLiteral") {
 
                 fnPath.traverse(
                     {
-                        //var abc = a.info
-                        VariableDeclaration: function (var_path) {
-                            var _path = var_path.node
-                            if (_path.type === "MemberExpression" && _path.object.name === obj_name && _path.property.value === obj_key_name) {
-                                console.log(obj_key_value)
-                                var_path.replace(obj_key_value);
+                        //var abc = a.info、var abc = a['info']、abc = a.info、abc = a['info']
+                        MemberExpression: function (_path) {
+                            var _node = _path.node
+                            if (_node.object.name === obj_name
+                                && (_node.property.value === obj_key_name || _node.property.name === obj_key_name)
+                                && _path.parent.type !== "CallExpression"
+                            ) {
+                                console.log(_path.parent.type)
+                                _path.replaceWith(prop.value);
                             }
-                        },
 
-                        //bcd = a.info
-                        ExpressionStatement: function (expre_path) {
-                            var _path = expre_path.get("expression");
-                            if (_path.type === "AssignmentExpression" && _path.operator === "=" && _path.right.type === "MemberExpression"
-                                && _path.right.object.name === obj_name && _path.right.property.name === obj_key_name) {
-                                console.log(obj_key_value)
-                                var_path.replace(obj_key_value);
-                            }
                         }
                     }
                 )
             }
 
-            if (prop.type === "FunctionExpression") {
+            if (prop.type === "CallExpression") {
 
             }
 
@@ -136,7 +134,7 @@ var code = "function f() {\n" +
     "    var a = {\n" +
     "        'info': 123,\n" +
     "        'bc': 456,\n" +
-    "        'dd': function(abc, abd){\n" +
+    "        'dd': function test(abc, abd){\n" +
     "            return abc+abd;\n" +
     "        }\n" +
     "    }\n" +
@@ -160,6 +158,7 @@ var ast = parser.parse(code)
 ast = handle_obj_member_value(ast)
 console.log(generator(ast).code)
 
+/*
 function f() {
     var a = {
         'info': 123,
@@ -183,5 +182,34 @@ function f() {
 
     var res = a['dd'](12, 23)
 }
+*/
 
+
+
+function f() {
+    var a = {
+        'info': 123,
+        'bc': 456,
+        'dd': function test(abc, abd) {
+            return abc + abd;
+        },
+        age: 10,
+        addr: "这是哪里",
+        test: !function (abc, abd) {
+            return abc + abd;
+        }(1213, 456)
+    };
+    var abc = 123;
+    abc = 123;
+    var abd = 123;
+    var abd = 1213;
+
+    var res = function test(abc, abd) {
+        return abc + abd;
+    }(12, 23);
+
+    console.log(res)
+}
+
+f()
 
