@@ -4,7 +4,10 @@ const generator = require("@babel/generator").default
 const types = require("@babel/types")
 
 
+
 /********************************************************************
+本案例来源蔡老板，相关问题如：https://bbs.nightteam.cn/thread-693.htm
+
  处理FunctionDeclaration
  思路:对于实参全部是字面量的函数调用，且运行结果唯一时，可以进行替换
  before:
