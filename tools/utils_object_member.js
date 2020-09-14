@@ -158,9 +158,15 @@ const visitor_obj = {
 
                             var params_str = params.join(",");
                             var call_fun = new Function(params_str, _code);
-                            var args = _node.arguments;
-                            for (let i in args) {
-                                args[i] = args[i].value;
+                            var args = [];
+                            var tmp = _node.arguments
+                            try {
+                                for (let i in tmp) {
+                                    if (tmp[i].value === undefined) return;
+                                    args.push(tmp[i].value);
+                                }
+                            } catch (e) {
+                                return;
                             }
 
                             if(types.isMemberExpression(_callee) && _callee.object.name === obj_name && (_callee.property.value === obj_key_name || _callee.property.name === obj_key_name)) {
