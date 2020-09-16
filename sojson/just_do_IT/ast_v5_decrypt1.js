@@ -59,10 +59,12 @@ function reduction(ast) {
 
     //02、还原对象赋值、取值的情况
     ast = handle_obj_member_value.handle_obj_member_value(ast)
+    ast = handle_obj_member_value.handle_anonymous_function(ast)
 
     //还原一些 Unicode、十六进制的数值/字符串
     traverse(ast, utils.visitor_hex_decode)
     traverse(ast, utils.visitor_unicode_decode)
+
 
     return ast
 }

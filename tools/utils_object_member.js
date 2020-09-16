@@ -124,7 +124,7 @@ const visitor_obj = {
 
                             if (_node.object.name === obj_name
                                 && (_node.property.value === obj_key_name || _node.property.name === obj_key_name)
-                                && _path.parent.type !== "CallExpression"
+                                // && _path.parent.type !== "CallExpression"
                             ) {
                                 _path.replaceWith(prop.value);
                             }
@@ -187,46 +187,78 @@ const visitor_obj = {
 
             }
 
+
         })
 
-
+        path.remove()
 
     }
 }
 
+
+/**
+ * 处理匿名函数赋值的情况
+ *
+ * (function (agr1, arg2){ arg1["info"]=123;arg2["info"]=123;})(a,b);  -> (function (){ a["info"]=123;b["info"]=123;})();
+ * */
+const vistor_anonymous_function = {
+    CallExpression: function (path) {
+        var node = path.node;
+        var arguments = node.arguments;
+
+        //无参数名的不用处理
+        if (arguments === null || arguments === undefined || arguments.length === 0) return;
+
+        var _callee = node.callee;
+        if (_callee.type !== "FunctionExpression") return;
+        var params = _callee.params;
+        var out_body = _callee.body;
+        var in_body = out_body.body;
+
+        if (params === undefined || params.length === 0) return;
+        if (arguments.length !== params.length || out_body.type !== "BlockStatement") return;
+
+        for (let i in arguments){
+            var arg_out_name = arguments[i].name;
+            var arg_in_name = params[i].name;
+
+            for (let j in in_body){
+                var expression = in_body[j];
+                if (expression.type !== "ExpressionStatement") continue;
+                if (expression.expression.type !== "AssignmentExpression") continue;
+                if (expression.expression.left.type !== "MemberExpression") continue;
+                if (expression.expression.left.object.name !== arg_in_name) continue;
+
+                expression.expression.left.object.name = arg_out_name;
+
+            }
+        }
+
+        node.callee.params = [];
+        node.arguments = [];
+    }
+}
+
+
+/**
+ * 处理对象赋值/取值的情况
+ * */
 function handle_obj_member_value(ast) {
     traverse(ast, visitor_obj);
     return ast
 }
 
 
-function example(){
-    var code = "function f() {\n" +
-        "    var a = {\n" +
-        "        'info': 123,\n" +
-        "        'bc': 456,\n" +
-        "        'dd': function test(abc, abd) {\n" +
-        "            return typeof abc + \"---\" + abd;\n" +
-        "        },\n" +
-        "        age: 10,\n" +
-        "        addr: \"这是哪里\",\n" +
-        "        nb: false\n" +
-        "    };\n" +
-        "    var abc = a['info'];\n" +
-        "    abc = a.info;\n" +
-        "    var abd = a.bc;\n" +
-        "    var dd = a.dd(12,23);\n" +
-        "    var nb = a.nb;\n" +
-        "\n" +
-        "}"
-
-    var ast = parser.parse(code)
-    ast = handle_obj_member_value(ast)
-
-    console.log(generator(ast).code)
+function handle_anonymous_function(ast) {
+    traverse(ast, vistor_anonymous_function);
+    return ast;
 }
 
 
+
+
+
 module.exports = {
-    "handle_obj_member_value": handle_obj_member_value
+    "handle_obj_member_value": handle_obj_member_value,
+    "handle_anonymous_function": handle_anonymous_function,
 }
