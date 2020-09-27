@@ -89,7 +89,6 @@ UglifyJS: http://lisperator.net/uglifyjs/
 致谢：
 
 - Nightteam 夜幕团队
-- 陆小凤
 - 杨溜溜(yacan8)
 - WecTeam(腾讯云社区作者)
 - 悦来客栈的老板 [【相关AST问题】](https://bbs.nightteam.cn/thread-693.htm)
