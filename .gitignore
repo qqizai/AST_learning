@@ -125,6 +125,9 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+decode_obfuscator*.js
+decode_result*.js
+
 # Pyre type checker
 .pyre/
 
